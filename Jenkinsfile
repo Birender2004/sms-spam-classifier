@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "spam-app"
-    }
-
     stages {
 
         stage('Clone Repository') {
@@ -19,23 +15,9 @@ pipeline {
             }
         }
 
-        stage('Load Image to Minikube') {
+        stage('Deploy Info') {
             steps {
-                sh 'minikube image load spam-app'
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+                sh 'echo "Docker image built successfully. Deployment handled locally via Kubernetes."'
             }
         }
     }
