@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spam-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spam
+  template:
+    metadata:
+      labels:
+        app: spam
+    spec:
+      containers:
+      - name: spam-container
+        image: spam-app:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8501
+        - containerPort: 8000
