@@ -9,7 +9,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Birender2004/sms-spam-classifier.git'
+                git branch: 'main', url: 'https://github.com/Birender2004/sms-spam-classifier.git'
             }
         }
 
