@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        KUBECONFIG_PATH = "C:\\Users\\Birender Pal Singh\\.kube\\config"
-    }
-
     stages {
 
         stage('Clone Code') {
@@ -27,21 +23,27 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% apply -f deployment.yaml"
-                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% apply -f service.yaml"
+                bat '''
+                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f deployment.yaml
+                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f service.yaml
+                '''
             }
         }
 
         stage('Restart Deployment') {
             steps {
-                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% rollout restart deployment spam-app"
+                bat '''
+                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" rollout restart deployment spam-app
+                '''
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% get pods"
-                bat "kubectl --kubeconfig=%KUBECONFIG_PATH% get svc"
+                bat '''
+                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" get pods
+                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" get svc
+                '''
             }
         }
     }
