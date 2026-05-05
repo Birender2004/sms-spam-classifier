@@ -15,9 +15,29 @@ pipeline {
             }
         }
 
-        stage('Deploy Info') {
+        stage('Load Image to Minikube') {
             steps {
-                sh 'echo "Docker image built successfully. Deployment handled locally via Kubernetes."'
+                sh 'minikube image load spam-app'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f service.yaml'
+            }
+        }
+
+        stage('Restart Deployment') {
+            steps {
+                sh 'kubectl rollout restart deployment spam-app'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
