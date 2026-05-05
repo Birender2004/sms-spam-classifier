@@ -15,12 +15,6 @@ pipeline {
             }
         }
 
-        stage('Start Minikube') {
-            steps {
-                bat 'minikube start'
-            }
-        }
-
         stage('Load Image into Minikube') {
             steps {
                 bat 'minikube image load spam-app'
