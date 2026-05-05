@@ -24,8 +24,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 bat '''
-                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f deployment.yaml
-                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" apply -f service.yaml
+                kubectl --kubeconfig="C:\\Users\\Birender Pal Singh\\.kube\\config" apply -f deployment.yaml
+                kubectl --kubeconfig="C:\\Users\\Birender Pal Singh\\.kube\\config" apply -f service.yaml
                 '''
             }
         }
@@ -33,7 +33,7 @@ pipeline {
         stage('Restart Deployment') {
             steps {
                 bat '''
-                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" rollout restart deployment spam-app
+                kubectl --kubeconfig="C:\\Users\\Birender Pal Singh\\.kube\\config" rollout restart deployment spam-app
                 '''
             }
         }
@@ -41,8 +41,8 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 bat '''
-                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" get pods
-                kubectl --kubeconfig="%USERPROFILE%\\.kube\\config" get svc
+                kubectl --kubeconfig="C:\\Users\\Birender Pal Singh\\.kube\\config" get pods
+                kubectl --kubeconfig="C:\\Users\\Birender Pal Singh\\.kube\\config" get svc
                 '''
             }
         }
