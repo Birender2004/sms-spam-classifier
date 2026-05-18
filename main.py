@@ -76,16 +76,30 @@ from nltk.stem import PorterStemmer
 
 from prometheus_client import start_http_server, Counter
 
+# -------------------- PROMETHEUS SERVER (FIXED) --------------------
+# Start metrics server only once (important for Streamlit reruns)
+if "metrics_started" not in st.session_state:
+    try:
+        start_http_server(8000, addr="0.0.0.0")
+    except:
+        pass
+    st.session_state["metrics_started"] = True
 
-start_http_server(8000)
-
-
+# Counter metric
 request_count = Counter('app_requests_total', 'Total number of predictions made')
 
+# -------------------- NLTK SETUP (SAFE DOWNLOAD) --------------------
+try:
+    nltk.data.find('tokenizers/punkt')
+except:
+    nltk.download('punkt')
 
-nltk.download('punkt')
-nltk.download('stopwords')
+try:
+    nltk.data.find('corpora/stopwords')
+except:
+    nltk.download('stopwords')
 
+# -------------------- TEXT PREPROCESSING --------------------
 def transform(text):
     text = text.lower()
     text = nltk.word_tokenize(text)
@@ -112,17 +126,18 @@ def transform(text):
 
     return " ".join(y)
 
-
+# -------------------- LOAD MODEL --------------------
 tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 model = pickle.load(open("mnb.pkl", "rb"))
 
+# -------------------- STREAMLIT UI --------------------
 st.title("SMS Spam Classifier")
 
 sms_input = st.text_area("Enter your message")
 
 if st.button("Predict"):
 
-
+    # Increment Prometheus counter
     request_count.inc()
 
     transformed_sms = transform(sms_input)
@@ -133,4 +148,3 @@ if st.button("Predict"):
         st.header("Spam")
     else:
         st.header("Not Spam")
-
