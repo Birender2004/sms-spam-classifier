@@ -74,21 +74,28 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-from prometheus_client import start_http_server, Counter
+# -------------------- PROMETHEUS (FINAL STABLE SETUP) --------------------
+from prometheus_client import make_wsgi_app, Counter
+from wsgiref.simple_server import make_server
+import threading
 
-# -------------------- PROMETHEUS SERVER (FIXED) --------------------
-# Start metrics server only once (important for Streamlit reruns)
-if "metrics_started" not in st.session_state:
+def start_metrics_server():
     try:
-        start_http_server(8000, addr="0.0.0.0")
+        app = make_wsgi_app()
+        server = make_server("0.0.0.0", 8000, app)
+        server.serve_forever()
     except:
         pass
+
+# Start metrics server only once (Streamlit-safe)
+if "metrics_started" not in st.session_state:
+    threading.Thread(target=start_metrics_server, daemon=True).start()
     st.session_state["metrics_started"] = True
 
-# Counter metric
+# Prometheus Counter
 request_count = Counter('app_requests_total', 'Total number of predictions made')
 
-# -------------------- NLTK SETUP (SAFE DOWNLOAD) --------------------
+# -------------------- NLTK SETUP --------------------
 try:
     nltk.data.find('tokenizers/punkt')
 except:
@@ -137,7 +144,7 @@ sms_input = st.text_area("Enter your message")
 
 if st.button("Predict"):
 
-    # Increment Prometheus counter
+    # Increment Prometheus metric
     request_count.inc()
 
     transformed_sms = transform(sms_input)
